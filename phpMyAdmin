@@ -1,0 +1,54 @@
+CREATE DATABASE food_order_system;
+USE food_order_system;
+
+-- Users table (improved with hashed password)
+CREATE TABLE users (
+    u_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    f_name VARCHAR(50) NOT NULL,
+    l_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    password VARCHAR(255) NOT NULL,  -- store bcrypt hash
+    address TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Restaurant category
+CREATE TABLE res_category (
+    c_id INT AUTO_INCREMENT PRIMARY KEY,
+    c_name VARCHAR(100) NOT NULL
+);
+
+-- Restaurants table
+CREATE TABLE restaurant (
+    rs_id INT AUTO_INCREMENT PRIMARY KEY,
+    c_id INT NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    address TEXT,
+    image VARCHAR(255),
+    FOREIGN KEY (c_id) REFERENCES res_category(c_id) ON DELETE CASCADE
+);
+
+-- Dishes table
+CREATE TABLE dishes (
+    d_id INT AUTO_INCREMENT PRIMARY KEY,
+    rs_id INT NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    slogan VARCHAR(300),
+    price DECIMAL(10,2) NOT NULL,
+    img VARCHAR(255),
+    FOREIGN KEY (rs_id) REFERENCES restaurant(rs_id) ON DELETE CASCADE
+);
+
+-- User orders table
+CREATE TABLE users_orders (
+    o_id INT AUTO_INCREMENT PRIMARY KEY,
+    u_id INT NOT NULL,
+    title VARCHAR(200),
+    quantity INT,
+    price DECIMAL(10,2),
+    status ENUM('in process','closed','rejected') DEFAULT 'in process',
+    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (u_id) REFERENCES users(u_id) ON DELETE CASCADE
+);
